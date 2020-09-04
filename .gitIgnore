@@ -1,0 +1,8 @@
+node_modules/*
+package-lock.json
+logs/*
+.vscode/*
+uploads/*
+.env
+.DS_Store
+.htaccess
