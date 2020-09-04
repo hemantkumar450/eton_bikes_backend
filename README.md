@@ -1,6 +1,6 @@
-# WittyVows- API
+# eton_bikes
 
-WittyVows Apis are built on Node Js using Express, Mongodb
+eton bikes Apis are built on Node Js using Express, Mongodb
 
 ## Requirements
 
@@ -16,7 +16,7 @@ Create .env file in root and change the variables for production or local
 ## Installation
 
 ```bash
-git clone https://github.com/T9l/WittyVows-Api.git
+git clone https://github.com/hemantkumar450/eton_bikes_backend.git
 ```
 
 ```bash
@@ -32,4 +32,4 @@ PM2 /dist/index.js
 ```
 
 ## License
-T9L
+eton bikes
