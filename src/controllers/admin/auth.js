@@ -37,6 +37,7 @@ class AdminAuth {
             next(e)
         }
     }
+    
 }
 
 export default new AdminAuth();
