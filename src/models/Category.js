@@ -10,6 +10,14 @@ const CategorySchema = new Schema(
       unique: true,
     },
     description: String,
+    child_categories: [{
+      type: Schema.Types.ObjectId,
+      ref: "Category",
+    }],
+    parent_category: {
+      type: Schema.Types.ObjectId,
+      ref: "Category",
+    },
     active: {
       type: Boolean,
       default: true,

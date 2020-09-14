@@ -28,6 +28,7 @@ mongoose.connect(config.database.uri, {
 mongoose.connection.on('error', logger.error);
 mongoose.Promise = global.Promise;
 
+
 /*
      XSS Security
 */

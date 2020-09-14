@@ -13,7 +13,7 @@ class AdminAuthService {
             authenticate: this.authenticate.bind(this),
             createToken: this.createToken.bind(this),
             createUser: this.createUser.bind(this)
-        }
+        } 
     }
 
     async authenticate({ email, password }) {
@@ -61,7 +61,8 @@ class AdminAuthService {
 
     async createUser({ name, gender, phone_number, email, password }) {
         try {
-            password = await hashPassword(password)
+            password = !password ? phone_number : password;
+            password = await hashPassword(password);
             return await Admin.create({
                 email,
                 password,

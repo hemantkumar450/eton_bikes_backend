@@ -9,7 +9,11 @@ const AdminSchema = new Schema({
         type: String,
         enum: ['male', 'female', 'others']
     },
-    email: { type: String },
+    email: { 
+        type: String,
+        required: true,
+        unique: true
+    },
     phone_number: {
         type: String,
         unique: true,

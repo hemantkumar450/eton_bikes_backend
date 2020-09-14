@@ -8,7 +8,7 @@ exports.hashPassword = (password) => {
             bcrypt.hash(password, 10, (err, hashed) => {
                 if (err) return resolve(null);
                 return resolve(hashed)
-            })
+            });
         } catch (e) {
             console.log(e)
             resolve(null)

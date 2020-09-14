@@ -8,7 +8,9 @@ fs.readdirSync(`${currentPath}`).forEach(function (file) {
         return;
     var name = file.substr(0, file.indexOf('.'));
     const schema = require(`./${name}`);
+    // console.log(name, schema);
     models[name] = mongoose.model(name, schema);
 });
+// console.log(models, 'name')
 
 module.exports = models;
