@@ -11,11 +11,11 @@ class File {
         }
     }
 
-    _checkExtension(buffer) {
+    async _checkExtension(buffer) {
         // check extension from magic hex 
         // input file buffer
         try {
-            return fileType(buffer);
+            return await fileType.fromBuffer(buffer);
         } catch (e) {
             throw (e)
         }
@@ -30,21 +30,22 @@ class File {
             let uploadedFile = null;
             let { name: real_name, size, data } = file;
             const randomName = await this._getName();
-            const ext = this._checkExtension(data).ext
+            const extensionObject = await this._checkExtension(data);
             if (config.storage.defaultStorage == 'local') {
-                if (!config.allowedExtensions.includes(ext)) {
+                if (!config.app.allowedExtensions.includes(extensionObject.ext)) {
                     throw new Error({ message: "bad extension", expose: true });
                 }
-                if (!fs.existsSync(config.storage.local.path)) {
-                    fs.mkdirSync(config.storage.local.path);
+                if (!fs.existsSync(config.storage.local.path.media)) {
+                    fs.mkdirSync(config.storage.local.path.media);
                 }
-                fs.writeFileSync(`${config.storage.local.path.media}/${randomName}.${ext}`, data);
-                uploadedFile = `${randomName}.${ext}`;
+                console.log(`${config.storage.local.path.media}/${randomName}.${extensionObject.ext}`);
+                fs.writeFileSync(`${config.storage.local.path.media}/${randomName}.${extensionObject.ext}`, data);
+                uploadedFile = `${randomName}.${extensionObject.ext}`;
             }
             return {
-                name: `${randomName}.${ext}`,
+                name: `${randomName}.${extensionObject.ext}`,
                 real_name,
-                media_link: `${config.storage.local.path.media}/${randomName}.${ext}`,
+                media_link: `${config.storage.local.path.media}/${randomName}.${extensionObject.ext}`,
             }
         } catch (e) {
             throw (e)

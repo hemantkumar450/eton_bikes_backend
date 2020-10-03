@@ -80,7 +80,7 @@ app.use(function (req, res, next) {
 });
 
 app.use('/api/admin', Sanatize, require('./routes/admin'));
-app.use('/api/user', Sanatize, require('./routes/user'));
+app.use('/api/customer', Sanatize, require('./routes/user'));
 app.use(logErrors)
 app.use(clientErrorHandler)
 

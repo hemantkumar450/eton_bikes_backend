@@ -7,7 +7,7 @@ import ProductController from '../../controllers/admin/ManageProduct';
 router.get('/products', ProductController.getProducts)
     .get('/products/:productId', ProductController.getProductById)
     .post('/products', ProductController.addOrEditProduct)
-    .post('fileUploader', ProductController.fileUploader)
+    .post('/fileUploader', ProductController.fileUploader)
     .put('/products/:productId', ProductController.addOrEditProduct)
     .delete('/products/:productId', ProductController.deleteProduct)
 
