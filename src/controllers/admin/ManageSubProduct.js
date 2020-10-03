@@ -13,7 +13,7 @@ class ManageSubProduct {
 
     async getSubProducts(req, res, next) {
         try {
-            const subProducts = await subsubProductService.getSubProducts(req.query);
+            const subProducts = await subProductService.getSubProducts(req.query);
             return res.status(200).json({
                 success: true,
                 message: "Sub Product List",
@@ -62,13 +62,12 @@ class ManageSubProduct {
             await subProductService.deleteSubProduct(req.params);
             return res.status(200).json({
                 success: true,
-                message: 'product deleted by id',
+                message: 'Sub Product deleted by id',
             })
         } catch (error) {
             next(error)
         }
     }
-
 }
 
 export default new ManageSubProduct();

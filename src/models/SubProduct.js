@@ -16,7 +16,7 @@ const CategorySchema = new Schema(
     },
     detail: {
       name: String,
-      image: {
+      media: {
         type: Schema.Types.ObjectId,
         ref: "Media"
       },
@@ -26,10 +26,7 @@ const CategorySchema = new Schema(
       }
     },
     build_specs: [{
-      key: {
-        type: Schema.Types.ObjectId,
-        ref: "Key",
-      },
+      key: String,
       value: String,
     }],
     active: {
