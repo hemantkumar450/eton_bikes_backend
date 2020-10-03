@@ -30,14 +30,13 @@ class AdminAuth {
             return res.status(200).json({
                 success: true,
                 token: token,
-                role: user.role,
                 user
             });
         } catch (e) {
             next(e)
         }
     }
-    
+
 }
 
 export default new AdminAuth();

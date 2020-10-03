@@ -247,7 +247,7 @@ class UserAuthService {
 
     _throwException(message) {
         throw ({
-            name: "wittyVows",
+            name: "etonBikes",
             code: 400,
             message
         });

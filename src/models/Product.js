@@ -14,37 +14,67 @@ const ProductSchema = new Schema(
         value: String,
       },
     ],
-    category: {
-      type: Schema.Types.ObjectId,
-      ref: "category",
-    },
     slug: {
       type: String,
       unique: true,
     },
-    close_up_images: [
+    close_up_media: [
       {
         type: Schema.Types.ObjectId,
         ref: "media",
       },
     ],
-    long_shot_images: [
+    long_shot_media: [
       {
         type: Schema.Types.ObjectId,
         ref: "media",
       },
     ],
-    video_urls: [
-      {
-        type: String,
-      },
-    ],
-    sub_product: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "subProduct",
-      },
-    ],
+    media_urls: [{
+      category: { type: String, enum: ["youtube", "media"], default: "media" },
+      url: String
+    }],
+    geometry: [{
+      key: String,
+      high: [{
+        key: {
+          type: Schema.Types.ObjectId,
+          ref: "Key",
+        },
+        small: Number,
+        medium: Number,
+        large: Number,
+      }],
+      low: [{
+        key: {
+          type: Schema.Types.ObjectId,
+          ref: "Key",
+        },
+        small: Number,
+        medium: Number,
+        large: Number,
+      }],
+      frame_size: [{
+        key: String,
+        from: Number,
+        to: Number
+      }]
+    }],
+    tech_support: {
+      faqs: [{
+        key: String,
+        value: String,
+      }],
+      components: [{
+        key: String,
+        value: String,
+      }],
+      warranty_and_registration: String
+    },
+    is_deleted: {
+      type: Boolean,
+      default: false
+    }
   },
   mongoSchemaOptions
 );

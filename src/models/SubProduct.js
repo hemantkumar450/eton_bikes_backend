@@ -10,18 +10,36 @@ const CategorySchema = new Schema(
       unique: true,
     },
     description: String,
-    child_categories: [{
-      type: Schema.Types.ObjectId,
-      ref: "Category",
-    }],
-    parent_category: {
+    product: {
       type: Schema.Types.ObjectId,
       ref: "Category",
     },
+    detail: {
+      name: String,
+      image: {
+        type: Schema.Types.ObjectId,
+        ref: "Media"
+      },
+      icon: {
+        type: Schema.Types.ObjectId,
+        ref: "Media"
+      }
+    },
+    build_specs: [{
+      key: {
+        type: Schema.Types.ObjectId,
+        ref: "Key",
+      },
+      value: String,
+    }],
     active: {
       type: Boolean,
       default: true,
     },
+    is_deleted: {
+      type: Boolean,
+      default: false
+    }
   },
   mongoSchemaOptions
 );

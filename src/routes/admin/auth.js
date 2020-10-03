@@ -4,8 +4,8 @@ const router = express.Router();
 import AdminAuthController from '../../controllers/admin/auth';
 
 // create login routes
-router.post('/createAdmin', AdminAuthController.createAdmin)
-    .post('/login', AdminAuthController.login)
+router.post('/login', AdminAuthController.login)
+// .post('/createAdmin', AdminAuthController.createAdmin)
 
 module.exports = router;
 

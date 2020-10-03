@@ -2,7 +2,7 @@ const storage = {
     defaultStorage: process.env.DEFAULT_STORAGE || 'local',
     local: {
         path: {
-            image: 'files',
+            media: 'files',
             document: 'files'
         }
     },

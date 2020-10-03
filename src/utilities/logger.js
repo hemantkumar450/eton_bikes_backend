@@ -30,7 +30,7 @@ class Logger {
   _path() {
     const date = new Date();
     console.log("path", config.log.path)
-    return path.join(config.log.path, `wittyVows-${moment(date).format('YYYY-MM-DD')}.log`);
+    return path.join(config.log.path, `etonBikes-${moment(date).format('YYYY-MM-DD')}.log`);
   }
 
   _log(level, error, name) {
@@ -47,7 +47,7 @@ class Logger {
     });
   }
 
-  _format(level, error, name = 'wittyVows') {
+  _format(level, error, name = 'etonBikes') {
     if (error.stack) error = error.stack;
     return `${this._date()} ${name}-${levels[level]}: ${JSON.stringify(error)}`;
   }

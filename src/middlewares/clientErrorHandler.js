@@ -34,7 +34,7 @@ module.exports = function clientErrorHandler(err, req, res, next) {
                 }
                 break;
             }
-            case 'wittyVows': {
+            case 'etonBikes': {
                 errObject.code = err.code;
                 errObject.message = err.message;
                 break;
