@@ -1,4 +1,5 @@
 import { Product, SubProduct } from '../../models';
+import crypto from 'crypto';
 
 class ProductServices {
     constructor() {
