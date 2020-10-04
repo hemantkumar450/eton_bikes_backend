@@ -32,15 +32,21 @@ class ProductServices {
 
     async getProductById({ findKey }) {
         try {
-            let condition = { is_deleted: false, active: true };
-            if (findKey.match(/^[0-9a-fA-F]{24}$/)) {
+            let condition = { is_deleted: false };
+            var checkForHexRegExp = new RegExp("^[0-9a-fA-F]{24}$");
+            if (checkForHexRegExp.test(findKey)) {
                 condition["_id"] = findKey;  // Yes, it's a valid ObjectId, proceed with `findById` call.
             } else {
                 condition["slug"] = findKey;
             }
-            const product = await Product.findOne(condition);
+            let product = await Product.findOne(condition)
+                .populate('geometry.high.key')
+                .populate('geometry.low.key');
+            product = product.toObject();
             if (product) {
-                product.sub_products = await SubProduct.find({ product: product._id });
+                product.sub_products = await SubProduct.find({ product: product._id })
+                    .populate('detail.media')
+                    .populate('detail.icon')
             }
             return product;
         } catch (e) {
