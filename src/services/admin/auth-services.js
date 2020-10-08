@@ -18,12 +18,13 @@ class AdminAuthService {
 
     async authenticate({ email, password }) {
         try {
+            console.log('s')
             let user = await Admin.findOne({
                 email
             });
             if (!user) {
                 throw ({
-                    name: "cofynd",
+                    name: "etonBikes",
                     code: 401,
                     message: `Invalid Credentials`
                 })
@@ -33,7 +34,7 @@ class AdminAuthService {
                 return user;
             } else {
                 throw ({
-                    name: "cofynd",
+                    name: "etonBikes",
                     code: 401,
                     message: `Invalid Credentials`
                 })

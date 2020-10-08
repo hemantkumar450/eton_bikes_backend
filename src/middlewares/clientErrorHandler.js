@@ -1,5 +1,6 @@
 const { err: constErr } = require('../utilities/constants');
 module.exports = function clientErrorHandler(err, req, res, next) {
+    console.log('ssssssss', err)
     const mongoErrorObj = {
         11000: {
             code: 409,

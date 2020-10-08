@@ -5,7 +5,7 @@ import AdminAuthController from '../../controllers/admin/auth';
 
 // create login routes
 router.post('/login', AdminAuthController.login)
-// .post('/createAdmin', AdminAuthController.createAdmin)
+.post('/createAdmin', AdminAuthController.createAdmin)
 
 module.exports = router;
 
