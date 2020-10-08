@@ -15,7 +15,15 @@ const PageContentSchema = new Schema(
       name: String,
       heading: String,
       order: Number,
-      redirect_urls: [String],
+      media_side: {
+        type: String,
+        enum: ['left', 'right', 'center'],
+        default: 'left'
+      },
+      redirect_detail: [{
+        button_text: String,
+        redirect_url: String
+      }],
       content: String,
       medias: [{
         type: Schema.Types.ObjectId,
@@ -23,7 +31,7 @@ const PageContentSchema = new Schema(
       }],
       sectionType: {
         type: String,
-        enum: ["banner", "social_media", "api_call", "slider"]
+        enum: ["banner", "social_media", "api_call", "slider", "media_panel"]
       }
     }],
     pageType: {

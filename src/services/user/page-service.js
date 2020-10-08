@@ -9,11 +9,11 @@ class ProductServices {
             setDefaultsOnInsert: true
         };
         return {
-            getPageById: this.getPageById.bind(this)
+            getPageByType: this.getPageByType.bind(this)
         }
     }
 
-    async getPageById({ pageType }) {
+    async getPageByType({ pageType }) {
         try {
             const pageContent = await PageContent.findOne({ pageType: pageType, is_deleted: false });
             return pageContent;
