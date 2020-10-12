@@ -21,35 +21,35 @@ const ProductSchema = new Schema(
     close_up_media: [
       {
         type: Schema.Types.ObjectId,
-        ref: "media",
+        ref: "Media",
       },
     ],
     long_shot_media: [
       {
         type: Schema.Types.ObjectId,
-        ref: "media",
+        ref: "Media",
       },
     ],
     media_urls: [{
-      category: { type: String, enum: ["youtube", "media"], default: "media" },
+      category: {
+        type: String,
+        enum: ["youtube", "banner"],
+        default: "youtube"
+      },
       url: String
     }],
     geometry: [{
       key: String,
       high: [{
-        key: {
-          type: Schema.Types.ObjectId,
-          ref: "Key",
-        },
+        key: String,
+        order: String,
         small: Number,
         medium: Number,
         large: Number,
       }],
       low: [{
-        key: {
-          type: Schema.Types.ObjectId,
-          ref: "Key",
-        },
+        key: String,
+        order: String,
         small: Number,
         medium: Number,
         large: Number,

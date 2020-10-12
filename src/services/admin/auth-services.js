@@ -13,12 +13,11 @@ class AdminAuthService {
             authenticate: this.authenticate.bind(this),
             createToken: this.createToken.bind(this),
             createUser: this.createUser.bind(this)
-        } 
+        }
     }
 
     async authenticate({ email, password }) {
         try {
-            console.log('s')
             let user = await Admin.findOne({
                 email
             });

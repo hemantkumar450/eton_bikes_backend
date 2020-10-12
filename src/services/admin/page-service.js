@@ -21,9 +21,9 @@ class ProductServices {
         try {
             let condition = { is_deleted: false };
             if (query) {
-                query = query.trim().toUpperCase();
-                condition['$or'] = [{ name: { $regex: '.*' + query + '.*' } }];
-            };
+                query = '.*' + query + '.*';
+                condition['name'] = { $regex: new RegExp('^' + query + '$', 'i') };
+            }
             const pageContents = await PageContent.find(condition)
                 .lean()
                 .limit(limit)
@@ -78,6 +78,7 @@ class ProductServices {
         pageType
     }) {
         try {
+            console.log(pageId);
             const pageContent = await PageContent.updateOne({ _id: pageId }, {
                 name,
                 heading,
@@ -93,6 +94,7 @@ class ProductServices {
 
     async deletePage({ pageId }) {
         try {
+            console.log(pageId);
             await PageContent.updateOne({ _id: pageId }, { $set: { is_deleted: true } });
             return true;
         } catch (error) {

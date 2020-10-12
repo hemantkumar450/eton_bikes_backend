@@ -20,8 +20,8 @@ class SubProductServices {
         try {
             let condition = { is_deleted: false };
             if (query) {
-                query = query.trim().toUpperCase();
-                condition['$or'] = [{ name: { $regex: '.*' + query + '.*' } }];
+                query = '.*' + query + '.*';
+                condition['name'] = { $regex: new RegExp('^' + query + '$', 'i') };
             }
             if (email) {
                 condition['email'] = { $regex: '.*' + email.toLowerCase() + '.*' }
@@ -49,7 +49,9 @@ class SubProductServices {
 
     async getSubProductById({ subProductId }) {
         try {
-            const subProduct = await SubProduct.findOne({ _id: subProductId, is_deleted: false });
+            const subProduct = await SubProduct.findOne({ _id: subProductId, is_deleted: false })
+                .populate('detail.media')
+                .populate('detail.icon');
             return subProduct;
         } catch (e) {
             throw (e)

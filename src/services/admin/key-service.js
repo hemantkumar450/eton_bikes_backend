@@ -20,8 +20,9 @@ class KeyServices {
         try {
             let condition = { is_deleted: false };
             if (query) {
-                query = query.trim().toUpperCase();
-                condition['$or'] = [{ name: { $regex: '.*' + query + '.*' } }];
+                query = '.*' + query + '.*';
+                console.log(query)
+                condition['name'] = { $regex: new RegExp('^' + query + '$', 'i') };
             }
             const keys = await Key.find(condition)
                 .lean()

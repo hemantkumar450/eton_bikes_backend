@@ -17,20 +17,23 @@ class ProductServices {
         }
     }
 
-    async getProducts({ limit, sortBy = 'name', orderBy, skip, query, email, active }) {
+    async getProducts({ limit, sortBy = 'name', orderBy, skip, query, active, dropdown }) {
         try {
             let condition = { is_deleted: false };
             if (query) {
-                query = query.trim().toUpperCase();
-                condition['$or'] = [{ name: { $regex: '.*' + query + '.*' } }];
-            }
-            if (email) {
-                condition['email'] = { $regex: '.*' + email.toLowerCase() + '.*' }
+                query = '.*' + query + '.*';
+                condition['name'] = { $regex: new RegExp('^' + query + '$', 'i') };
             }
             if (+active === 1) {
                 condition['active'] = true;
             } else if (+active === 0) {
                 condition['active'] = false;
+            }
+            if (+dropdown === 1) {
+                return await Product.find(condition, { name: 1, email: 1 })
+                    .lean()
+                    .sort({ [sortBy]: orderBy })
+                    .lean();
             }
             const products = await Product.find(condition)
 
@@ -50,7 +53,9 @@ class ProductServices {
 
     async getProductById({ productId }) {
         try {
-            const product = await Product.findOne({ _id: productId, is_deleted: false });
+            const product = await Product.findOne({ _id: productId, is_deleted: false })
+                .populate('long_shot_media')
+                .populate('close_up_media');
             if (product) {
                 product.sub_products = await SubProduct.find({ product: productId });
             }
