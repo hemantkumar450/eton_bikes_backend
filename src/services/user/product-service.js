@@ -10,7 +10,7 @@ class ProductServices {
 
     async getProducts({ limit, sortBy = 'name', orderBy, skip, query }) {
         try {
-            let condition = { is_deleted: false, active: true };
+            let condition = { is_deleted: false };
             if (query) {
                 query = query.trim().toUpperCase();
                 condition['$or'] = [{ name: { $regex: '.*' + query + '.*' } }];
@@ -39,9 +39,8 @@ class ProductServices {
             } else {
                 condition["slug"] = findKey;
             }
-            let product = await Product.findOne(condition)
-                .populate('geometry.high.key')
-                .populate('geometry.low.key');
+
+            let product = await Product.findOne(condition);
             product = product.toObject();
             if (product) {
                 product.sub_products = await SubProduct.find({ product: product._id })
