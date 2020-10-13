@@ -41,7 +41,8 @@ class ProductServices {
 
     async getPageById({ pageId }) {
         try {
-            const pageContent = await PageContent.findOne({ _id: pageId, is_deleted: false });
+            const pageContent = await PageContent.findOne({ _id: pageId, is_deleted: false })
+                .populate('sections.medias');
             return pageContent;
         } catch (e) {
             throw (e)

@@ -27,7 +27,7 @@ const PageContentSchema = new Schema(
       content: String,
       medias: [{
         type: Schema.Types.ObjectId,
-        ref: "media"
+        ref: "Media"
       }],
       sectionType: {
         type: String,

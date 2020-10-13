@@ -50,6 +50,7 @@ class SubProductServices {
     async getSubProductById({ subProductId }) {
         try {
             const subProduct = await SubProduct.findOne({ _id: subProductId, is_deleted: false })
+                .populate({ path: 'product', select: '_id , name' })
                 .populate('detail.media')
                 .populate('detail.icon');
             return subProduct;
