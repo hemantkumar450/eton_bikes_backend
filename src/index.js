@@ -63,7 +63,7 @@ app.use(fileUpload({
     debug: true,
     limits: { fileSize: config.storage.maxFileSize }
 }));
-app.use(express.static('files'))
+app.use('/files', express.static('files'))
 app.use(helmet());
 app.use(cors())
 app.use(bodyParser.json());
