@@ -16,6 +16,8 @@ class ProductServices {
                 condition['$or'] = [{ name: { $regex: '.*' + query + '.*' } }];
             }
             const products = await Product.find(condition)
+                .populate('close_up_media')
+                .populate('long_shot_media')
                 .lean()
                 .limit(limit)
                 .skip(skip)
@@ -41,8 +43,8 @@ class ProductServices {
             }
 
             let product = await Product.findOne(condition)
-                    .populate('close_up_media')
-                    .populate('long_shot_media');
+                .populate('close_up_media')
+                .populate('long_shot_media');
             product = product.toObject();
             if (product) {
                 product.sub_products = await SubProduct.find({ product: product._id })
