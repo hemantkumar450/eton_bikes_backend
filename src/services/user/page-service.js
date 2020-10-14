@@ -15,7 +15,8 @@ class ProductServices {
 
     async getPageByType({ pageType }) {
         try {
-            const pageContent = await PageContent.findOne({ pageType: pageType, is_deleted: false });
+            const pageContent = await PageContent.findOne({ pageType: pageType, is_deleted: false })
+                .populate('sections.medias');
             return pageContent;
         } catch (e) {
             throw (e)
