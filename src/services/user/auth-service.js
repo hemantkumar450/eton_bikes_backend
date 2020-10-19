@@ -1,9 +1,15 @@
-import { User, Firebase } from '../../models';
+import { User } from '../../models';
 const jwt = require('jsonwebtoken');
 import config from '../../config';
-const aes256 = require('aes256');
 import redis from '../../utilities/redis';
-import { populate } from '../../utilities/constants';
+import emailService from '../common/email.service';
+let bcrypt = require('bcrypt');
+const {
+    hashPassword
+} = require('../../utilities/helper');
+const aes256 = require('aes256');
+import { emailTemplate, replaceVariables } from '../../utilities/constants';
+import app from '../../config/app';
 
 class UserAuthService {
     constructor() {
@@ -13,97 +19,90 @@ class UserAuthService {
             setDefaultsOnInsert: true
         };
         return {
+            authenticate: this.authenticate.bind(this),
             createToken: this.createToken.bind(this),
             createUser: this.createUser.bind(this),
             updateUser: this.updateUser.bind(this),
-            userVerify: this.userVerify.bind(this),
-            regenerateCode: this.regenerateCode.bind(this),
+            verifyEmail: this.verifyEmail.bind(this),
+            resendEmailVerification: this.resendEmailVerification.bind(this),
             logout: this.logout.bind(this),
-            hasAdminRole: this.hasAdminRole.bind(this),
-            otpSend: this.otpSend.bind(this),
-            _checkExpiry: this._checkExpiry.bind(this)
         }
     }
 
+    async authenticate({ email, password }) {
+        try {
+            let user = await User.findOne({
+                'email_detail.email': email,
+                'email_detail.is_verified': true
+            });
+            if (!user) {
+                throw ({
+                    name: "etonBikes",
+                    code: 401,
+                    message: `Invalid Email Or Email is not verified`
+                })
+            }
+            const res = await bcrypt.compare(password, user.password);
+            if (res) {
+                return user;
+            } else {
+                throw ({
+                    name: "etonBikes",
+                    code: 401,
+                    message: `Invalid Credentials`
+                })
+            }
+        } catch (e) {
+            throw (e)
+        }
+    };
+
     async createToken(user) {
         try {
-            const { _id: userId } = user;
-            let obj = await this._createTokenObject(user);
+            const { _id, email_detail } = user;
+            let obj = {};
+            const encryptedKey = config.app.encryptionKey;
+            obj.id = await aes256.encrypt(encryptedKey, _id.toString());
+            obj.email = await aes256.encrypt(encryptedKey, email_detail.email);
             const token = jwt.sign(obj, config.app.superSecretForUser, {
                 expiresIn: config.app.tokenLife
             });
-            const refreshToken = jwt.sign(obj, config.app.refreshTokenSecretForUser, { expiresIn: config.app.refreshTokenLife })
-            redis.set(userId.toString(), JSON.stringify({ token, refreshToken }));
-            return { token, refreshToken };
+            redis.set(_id.toString(), JSON.stringify({ token }));
+            return token;
         } catch (e) {
             throw (e)
         }
     }
 
-    async createUser({ phone_number }) {
-        let user = await User.findOne({ phone_number });
-        const code = this._randomCodeGenerator(phone_number);
-        const phone_verification = { code, is_verified: false, expires: new Date() };
-        /**TODO 
-         * call message service for sending OTP on given phone_nuumber
-         */
-        if (user) {
-            user = await User.findOneAndUpdate(
-                { phone_number },
-                { phone_verification },
-                this.updateOptions
-            );
-        } else {
-            const u_id = await this._createUniqueInteger();
-            user = await User.create({
-                phone_number,
-                u_id,
-                phone_verification
+    async createUser({ name, email, password, profile_picture, gender }) {
+        try {
+            password = await hashPassword(password);
+            const token = await this.generateVerificationLink(email);
+            const link = `${config.app.frontEndUrl}?token=${token}`;
+            const message = Object.assign({}, emailTemplate.verifyToken);
+            const object = { from: app.etonEmailForVerificationId, to: email, link: link }
+            message.from = replaceVariables(message.from, object);
+            message.to = replaceVariables(message.to, object);
+            message.html = replaceVariables(message.html, object);
+            emailService.sendMail(message);
+            const email_detail = { email, token };
+            return await User.create({
+                name,
+                email_detail,
+                profile_picture,
+                gender,
+                password
             });
-        }
-        const message = `Your verification code is ${user.phone_verification.code}`;
-        const sms = await this._smsService({ phone_number, message });
-        return null;//Object.assign({}, sms, user.phone_verification);
-    }
-
-    async _createUniqueInteger() {
-        try {
-            const random_number = Date.now() + Math.floor(Math.random() * 899999 + Math.random() * 999999)
-            const str_random_number = random_number.toString();
-            const unique_number = Number(str_random_number.slice(4, 13));
-            const user = await User.findOne({ u_id: unique_number });
-            if (user) {
-                return await this._createUniqueInteger();
-            }
-            return unique_number;
-        } catch (error) {
-            throw (error);
+        } catch (e) {
+            throw (e)
         }
     }
 
-    async otpSend({ id, phoneNumber: phone_number }) {
-        const code = this._randomCodeGenerator(phone_number);
-        const phone_verification = { code, expires: new Date() };
-        await User.findOneAndUpdate(
-            { _id: id },
-            { phone_verification },
-        );
-        const message = `Your verification code is ${code}`;
-        const sms = await this._smsService({ phone_number, message });
-        return null//Object.assign({}, sms, phone_verification);
-    }
-
-    async updateUser({ id, first_name, middle_name, last_name, gender, email, user_name }) {
+    async updateUser({ id, name, gender, email }) {
         try {
-            let condition = { is_sign_up: true };
-            if (first_name) {
-                condition['first_name'] = first_name;
-            }
-            if (middle_name) {
-                condition['middle_name'] = middle_name;
-            }
-            if (last_name) {
-                condition['last_name'] = last_name;
+            let condition = {};
+            if (name) {
+                condition['name'] = name;
             }
             if (gender) {
                 condition['gender'] = gender;
@@ -111,9 +110,6 @@ class UserAuthService {
             if (email) {
                 await this._checkEmailExist(email, id)
                 condition['email'] = email;
-            }
-            if (user_name) {
-                condition['user_name'] = user_name;
             }
             const user = await User.findOneAndUpdate(
                 { _id: id }, condition, { new: true }
@@ -124,64 +120,8 @@ class UserAuthService {
         }
     }
 
-    async userVerify({ phone_number, code }) {
-        const user = await User.findOne({ phone_number });
-        if (this._checkExpiry(user, code)) {
-            const user = await User.findOneAndUpdate({ phone_number },
-                {
-                    'phone_verification.is_verified': true,
-                },
-                this.updateOptions
-            ).populate({
-                path: 'profile_picture',
-                populate: populate.createdBy
-            })
-            return user;
-        } else {
-            this._throwException('Invalid code or code expired')
-        }
-    }
-
-    async regenerateCode({ phone_number }) {
+    async logout({ id }) {
         try {
-            const code = this._randomCodeGenerator(phone_number);
-            /**TODO 
-            * call message service for re-sending OTP on given phone_nuumber
-            */
-            const user = await User.findOneAndUpdate({ phone_number },
-                {
-                    'phone_verification.code': code,
-                    'phone_verification.expires': new Date()
-                },
-                this.updateOptions
-            );
-            const message = `Your resend verification code is ${user.phone_verification.code}`;
-            await this._smsService({ phone_number, message });
-            return null;//user.phone_verification;
-        } catch (error) {
-            throw (error);
-        }
-    }
-
-    // { id: user_id, device_id, phone_number, token } -- param
-    async logout({ id, device_id }) {
-        try {
-            // const key = `${user_id}_${phone_number}`;
-            // const userLog = await redis.hmGet(key);
-            // const object = {};
-            // Object.keys(userLog).forEach(property => {
-            //     if (property !== token) {
-            //         object[property] = userLog[property];
-            //     }
-            // });
-            // await redis.delete(key);
-            // if (this._isEmptyObject(object)) {
-            //     await redis.delete(user_id);
-            // } else {
-            //     await redis.hmSet(key, object);
-            // }
-            // await Firebase.deleteOne({ device_id });
-            await Firebase.deleteOne({ device_id })
             await redis.delete(id);
             return true;
         } catch (error) {
@@ -189,48 +129,55 @@ class UserAuthService {
         }
     }
 
-    hasAdminRole(wedding, userId) {
+    async generateVerificationLink(email) {
         try {
-            let is_admin = wedding.created_by == userId ? true : false;
-            if (!is_admin) {
-                const has_admin = wedding.admins.find(x => x == userId)
-                is_admin = has_admin ? true : false;
-            }
-            return is_admin;
-        } catch (error) {
-            throw (error);
+            const token = jwt.sign({}, config.app.verificationSecret, {
+                expiresIn: "24h"
+            });
+            await User.update({ 'email_detail.email': email }, { 'email_detail.token': token });
+            return token;
+        } catch (e) {
+            throw (e)
         }
     }
 
-    // _isEmptyObject(map) {
-    //     for (var key in map) {
-    //         if (map.hasOwnProperty(key)) {
-    //             return false;
-    //         }
-    //     }
-    //     return true;
-    // }
-
-    _checkExpiry(user, code) {
-        if (user && user.phone_verification.code === Number(code)) {
-            const t1 = new Date();
-            const t2 = new Date(user.phone_verification.expires);
-            var dif = t1.getTime() - t2.getTime();
-            var Seconds = dif / 1000;
-            var Seconds_Between_Dates = Math.abs(Seconds);
-            if (Seconds_Between_Dates <= 60) {
-                return true;
+    async verifyEmail({ token }) {
+        try {
+            const user = await User.findOneAndUpdate(
+                { 'email_detail.token': token },
+                { 'email_detail.is_verified': true }
+            );
+            if (!user) {
+                this._throwException('Invalid or Link Expired');
             }
+            return true;
+        } catch (e) {
+            throw (e)
         }
-        return false;
     }
 
-
-    _randomCodeGenerator(phone_number) {
-        if (config.app.mode == 'DEVELOPMENT' || config.app.loginNumbers.indexOf(phone_number) > -1) {
-            return 1234;
+    async resendEmailVerification({ email }) {
+        try {
+            let user = await User.findOne({
+                'email_detail.email': email
+            });
+            if (user) {
+                if (user.email_detail.is_verified) {
+                    this._throwException('Email already verified');
+                }
+                const link = await this.generateVerificationLink(email);
+                // await emailServices.send({
+                //     code: 'EMAIL-VERIFICATION',
+                //     htmlVariables: { name: user.name, "verification-link": link },
+                //     subjectVariables: {},
+                //     emails: [email]
+                // });
+            } else {
+                this._throwException('User not registered');
+            }
+        } catch (e) {
+            throw (e)
         }
-        return Math.floor(1000 + Math.random() * 9000);
     }
 
     async _checkEmailExist(email, userId) {

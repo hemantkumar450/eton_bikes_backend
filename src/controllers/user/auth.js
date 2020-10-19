@@ -4,28 +4,48 @@ import auth from '../../services/user/auth-service';
 class AdminAuth {
     constructor() {
         return {
-            createAndUpdateUser: this.createAndUpdateUser.bind(this),
-            verify: this.verify.bind(this),
-            regenerateCode: this.regenerateCode.bind(this),
+            login: this.login.bind(this),
+            verifyEmail: this.verifyEmail.bind(this),
+            createUser: this.createUser.bind(this),
+            updateUser: this.updateUser.bind(this),
             logout: this.logout.bind(this),
-            otpSend: this.otpSend.bind(this),
         }
     }
 
-    async createAndUpdateUser(req, res, next) {
+    async login(req, res, next) {
         try {
-            let user = null;
-            let message = 'User Added';
-            if (req.method == 'PUT') {
-                const forEdit = Object.assign({}, req.user, req.body)
-                user = await auth.updateUser(forEdit)
-                message = 'User Updated';
-            } else {
-                user = await auth.createUser(req.body)
-            }
+            let user = await auth.authenticate(req.body);
+            let token = await auth.createToken(user);
+            user.password = undefined;
             return res.status(200).json({
                 success: true,
-                message,
+                token,
+                user
+            });
+        } catch (e) {
+            next(e)
+        }
+    }
+
+    async verifyEmail(req, res, next) {
+        try {
+            let user = await auth.verifyEmail(req.body);
+            return res.status(200).json({
+                success: true,
+                message: 'email verification',
+                data: user
+            });
+        } catch (e) {
+            next(e)
+        }
+    }
+
+    async createUser(req, res, next) {
+        try {
+            const user = await auth.createUser(req.body)
+            return res.status(200).json({
+                success: true,
+                message: 'User Added',
                 data: user
             })
         } catch (error) {
@@ -33,28 +53,14 @@ class AdminAuth {
         }
     }
 
-    async verify(req, res, next) {
+    async updateUser(req, res, next) {
         try {
-            const user = await auth.userVerify(req.body);
-            let { token, refreshToken } = await auth.createToken(user);
-            const data = { token, refreshToken, user };
+            const forEdit = Object.assign({}, req.user, req.body)
+            const user = await auth.updateUser(forEdit)
             return res.status(200).json({
                 success: true,
-                message: 'User verified',
-                data
-            })
-        } catch (error) {
-            next(error)
-        }
-    }
-
-    async regenerateCode(req, res, next) {
-        try {
-            const code = await auth.regenerateCode(req.body);
-            return res.status(200).json({
-                success: true,
-                message: 'resend code',
-                data: code
+                message: 'User Updated',
+                data: user
             })
         } catch (error) {
             next(error)
@@ -69,20 +75,6 @@ class AdminAuth {
                 success: true,
                 message: 'Successfully logged Out'
             });
-        } catch (error) {
-            next(error);
-        }
-    }
-
-    async otpSend(req, res, next) {
-        try {
-            const object = Object.assign({}, req.params, req.user);
-            const result = await auth.otpSend(object);
-            return res.status(200).json({
-                success: true,
-                message: 'Otp sent',
-                data: result
-            })
         } catch (error) {
             next(error);
         }

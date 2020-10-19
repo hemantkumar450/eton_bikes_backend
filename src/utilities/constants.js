@@ -115,6 +115,24 @@ exports.populate = {
   }
 }
 
+exports.emailTemplate = {
+  verifyToken: {
+    from: '{from}', // Sender address
+    to: '{to}',         // List of recipients
+    subject: 'Email Verification for EtonBikes', // Subject line
+    html: `<p>Day Greetings</p>
+    <p>From Eton,</p>
+    <p><br></p>
+    <p>Please click on given link for verify your email with us.</p>
+    <p>{link}</p>
+    <p><strong>Note</strong>: This link is valid for 24 hours only. Please re generate the link if its expired.</p>
+    <p><br></p>
+    <p>Thanks &amp; Regards,</p>
+    <p>Eton Team.</p>
+    <p><br></p>`
+  }
+}
+
 export function replaceVariables(text, object) {
   text = String(text);
   let variables = Object.entries(object);

@@ -9,11 +9,14 @@ const app = {
   superSecretForUser: process.env.JWT_SECRET_USER || 'NakJ5JQHWaTnz3GiXQl0kVPjsFYzdI8ClA',
   refreshTokenSecretForUser: process.env.REFRESH_TOKEN_FOR_USER || 'XdOSHqT2cmEPuma9aWzCvZsLzuZfPaQq',
   refreshTokenSecretForAdmin: process.env.REFRESH_TOKEN_FOR_ADMIN || 'FgqVbQNpMfgIalRAmRucS26hWOXMsP0z',
-  tokenLife: 60000, /** 1 minute or 60 sec */
+  tokenLife: '20d', /** 1 minute or 60 sec */
   refreshTokenLife: '20d', /** 20 days */
   base: process.env.BASE || 'http://0.0.0.0:4000',
   allowedExtensions: ['png', 'jpeg', 'jpg', 'pdf'],
-  loginNumbers: ['8800365519', '9988899888']
+  verificationSecret: process.env.VERIFICATION_SECRET || 'FgqVbQNpMfgIalRAmRucS26hWOXMsP0z',
+  frontEndUrl: process.env.FRONT_END_ULR || 'http://www.etonbikes.com/validate-email',
+  etonEmailForVerificationId: process.env.VERIFICATION_EMAIL || 'sarikasingh0311@gmail.com',
+  etonEmailForVerificationPassword: process.env.VERIFICATION_EMAIL_password || 'Sarika@123'
 };
 
 export default app;

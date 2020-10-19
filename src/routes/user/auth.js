@@ -6,11 +6,10 @@ const CheckToken = require('../../middlewares/checkToken');
 // import firebaseToken from '../user/'
 
 // create login routes
-router.post('/check', UserAuthController.createAndUpdateUser)
-    .post('/verify', UserAuthController.verify)
-    .post('/refreshToken', CheckToken.jwtRefreshTokenForUser)
-    .post('/resendCode', UserAuthController.regenerateCode)
-    .get('/otpSend/:phoneNumber', CheckToken.jwtVerifyForUser, UserAuthController.otpSend)
+router.post('/signup', UserAuthController.createUser)
+    .post('/login', UserAuthController.login)
+    .post('/verify', CheckToken.verificationJwtVerify, UserAuthController.verifyEmail)
+    .post('/update', CheckToken.jwtVerifyForUser, UserAuthController.updateUser)
     .post('/logout', CheckToken.jwtVerifyForUser, UserAuthController.logout)
 
 module.exports = router;
