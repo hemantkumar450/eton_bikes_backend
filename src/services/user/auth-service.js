@@ -84,8 +84,26 @@ class UserAuthService {
             message.from = replaceVariables(message.from, object);
             message.to = replaceVariables(message.to, object);
             message.html = replaceVariables(message.html, object);
-            emailService.sendMail(message);
             const email_detail = { email, token };
+
+            const isUserExist = await this.checkUserExists(email);
+            console.log(isUserExist);
+            if (isUserExist) {
+                if (isUserExist.email_detail.is_verified) {
+                    this._throwException('User is already exists');
+                } else {
+                    await User.findOneAndUpdate(
+                        { 'email_detail.email': email },
+                        { name, email_detail, profile_picture, gender, password }
+                    )
+                    emailService.sendMail(message);
+                    return 'Please check the email for Verification';
+                }
+            }
+
+            emailService.sendMail(message);
+           
+
             return await User.create({
                 name,
                 email_detail,
@@ -95,6 +113,18 @@ class UserAuthService {
             });
         } catch (e) {
             throw (e)
+        }
+    }
+
+    async checkUserExists(email) {
+        try {
+            const user = await User.findOne({ 'email_detail.email': email });
+            if (user) {
+                return user;
+            }
+            return null;
+        } catch (error) {
+            throw (error)
         }
     }
 
