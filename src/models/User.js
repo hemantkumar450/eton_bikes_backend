@@ -20,7 +20,7 @@ const UserSchema = new Schema({
     },
     password: String,
     phone_detail: {
-        phone_nuber: { type: String, unique: true },
+        phone_nuber: { type: String },
         code: Number,
         expires: {
             type: Date,
