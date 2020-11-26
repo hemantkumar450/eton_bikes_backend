@@ -13,6 +13,7 @@ import cookieParser from 'cookie-parser';
 const PORT = config.app.port;
 import bodyParser from 'body-parser';
 import cors from 'cors';
+const https = require('https');
 let server = require('https').Server(app);
 import fileUpload from 'express-fileupload';
 let logErrors = require('./middlewares/logErrors');
