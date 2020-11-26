@@ -91,12 +91,18 @@ app.use('/api/customer', Sanatize, require('./routes/user'));
 app.use(logErrors)
 app.use(clientErrorHandler)
 
-server.listen(PORT, function (err) {
+// server.listen(PORT, function (err) {
+//     if (err) {
+//         console.log(err);
+//     } else {
+//         console.log('Server started at : ' + PORT);
+//     }
+// });
+
+https.createServer(options, app).listen(PORT, function (err) {
     if (err) {
         console.log(err);
     } else {
         console.log('Server started at : ' + PORT);
     }
 });
-
-https.createServer(options, app).listen(PORT);
