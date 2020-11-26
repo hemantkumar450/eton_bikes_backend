@@ -1,5 +1,11 @@
 import express from 'express';
-let app = express();
+let app = express(),
+    fs = require("fs");
+
+const options = {
+    key: fs.readFileSync("/etc/nginx/ssl/server.key"),
+    cert: fs.readFileSync("/etc/nginx/ssl/server.crt")
+};
 import config from './config';
 import logger from './utilities/logger';
 import helmet from 'helmet';
@@ -91,3 +97,5 @@ server.listen(PORT, function (err) {
         console.log('Server started at : ' + PORT);
     }
 });
+
+https.createServer(options, app).listen(PORT);
