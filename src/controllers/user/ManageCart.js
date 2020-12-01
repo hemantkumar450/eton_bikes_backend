@@ -15,7 +15,7 @@ class ManageCart {
             const cartList = await cartService.getCartItemsByUser({ userId: id });
             return res.status(200).json({
                 success: true,
-                message: "Cart List bu User",
+                message: "Cart List by User",
                 data: cartList
             })
         } catch (error) {

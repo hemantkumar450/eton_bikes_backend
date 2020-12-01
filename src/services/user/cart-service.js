@@ -9,7 +9,9 @@ class CartServices {
             setDefaultsOnInsert: true
         };
         return {
-            getCartItemsByUser: this.getCartItemsByUser.bind(this)
+            getCartItemsByUser: this.getCartItemsByUser.bind(this),
+            addCart: this.addCart.bind(this),
+            updateCartStatus: this.updateCartStatus.bind(this)
         }
     }
 

@@ -11,7 +11,7 @@ const CartSchema = new Schema(
     },
     sub_product: {
       type: Schema.Types.ObjectId,
-      ref: "sub_product"
+      ref: "SubProduct"
     },
     status: {
       type: String,
