@@ -5,18 +5,18 @@ import { mongoSchemaOptions } from "../utilities/constants";
 
 const CartSchema = new Schema(
   {
-    user:{
-        type:Schema.Types.ObjectId,
-        ref:"user"
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: "user"
     },
-    sub_product:{
-        type:Schema.Types.ObjectId,
-        ref:"sub_product"
+    sub_product: {
+      type: Schema.Types.ObjectId,
+      ref: "sub_product"
     },
-    status:{
-        type: String,
-        enum:["bucket", "purchased"],
-        default: "bucket"
+    status: {
+      type: String,
+      enum: ["bucket", "purchased", "removed"],
+      default: "bucket"
     },
   },
   mongoSchemaOptions
