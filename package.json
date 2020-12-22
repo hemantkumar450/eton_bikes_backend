@@ -59,6 +59,7 @@
     "nodemon": "^2.0.4",
     "passport-jwt": "^4.0.0",
     "path": "^0.12.7",
+    "razorpay": "^2.0.6",
     "read-chunk": "^3.2.0",
     "request": "^2.88.2",
     "request-promise": "^4.2.6",

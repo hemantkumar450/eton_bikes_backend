@@ -45,13 +45,16 @@ class ProductServices {
             let product = await Product.findOne(condition)
                 .populate('close_up_media')
                 .populate('long_shot_media');
-            product = product.toObject();
             if (product) {
-                product.sub_products = await SubProduct.find({ product: product._id })
-                    .populate('detail.media')
-                    .populate('detail.icon')
+                product = product.toObject();
+                if (product) {
+                    product.sub_products = await SubProduct.find({ product: product._id })
+                        .populate('detail.media')
+                        .populate('detail.icon')
+                }
+                return product;
             }
-            return product;
+            return null;
         } catch (e) {
             throw (e)
         }

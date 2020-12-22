@@ -18,8 +18,10 @@ class CartServices {
     async getCartItemsByUser({ userId }) {
         try {
             const cartItems = await Cart.find({ user: userId, status: 'bucket' })
-                .populate('sub_product')
-                .populate('sub_product.product');
+                .populate({
+                    path: 'sub_product',
+                    populate: { path: 'product' }
+                })
             return cartItems;
         } catch (e) {
             throw (e)
