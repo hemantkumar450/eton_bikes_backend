@@ -5,7 +5,9 @@ class ManageCart {
         return {
             getCartItemsByUser: this.getCartItemsByUser.bind(this),
             addCart: this.addCart.bind(this),
-            updateCartStatus: this.updateCartStatus.bind(this)
+            updateCartStatus: this.updateCartStatus.bind(this),
+            removeCartOneItem: this.removeCartOneItem.bind(this),
+            removeCartItem: this.removeCartItem.bind(this),
         }
     }
 
@@ -23,6 +25,34 @@ class ManageCart {
         }
     }
 
+    async removeCartItem(req, res, next) {
+        try {
+            const { id } = req.user;
+            const object = Object.assign({ userId: id }, req.body);
+            let cart = await cartService.deleteCartItem(object);
+            return res.status(200).json({
+                success: true,
+                message: "Cart Item deleted",
+                data: cart
+            });
+        } catch (e) {
+            next(e)
+        }
+    }
+    async removeCartOneItem(req, res, next) {
+        try {
+            const { id } = req.user;
+            const object = Object.assign({ userId: id }, req.body);
+            let cart = await cartService.deleteCartOneItem(object);
+            return res.status(200).json({
+                success: true,
+                message: "Cart Item deleted",
+                data: cart
+            });
+        } catch (e) {
+            next(e)
+        }
+    }
     async addCart(req, res, next) {
         try {
             const { id } = req.user;

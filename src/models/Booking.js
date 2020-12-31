@@ -12,10 +12,17 @@ const BookingSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "User",
     },
-    sub_product: {
-      type: Schema.Types.ObjectId,
-      ref: "sub_product",
-    },
+    product_details: [{
+      sub_product: {
+        type: Schema.Types.ObjectId,
+        ref: "sub_product",
+      },
+      quantity: {
+        type: Number,
+        default: 1
+      }
+    }],
+    payment_detail: Object,
     status: {
       type: String,
       enum: ["failed", "success", "pending"],

@@ -11,7 +11,10 @@ class CartServices {
         return {
             getCartItemsByUser: this.getCartItemsByUser.bind(this),
             addCart: this.addCart.bind(this),
-            updateCartStatus: this.updateCartStatus.bind(this)
+            updateCartStatus: this.updateCartStatus.bind(this),
+            deleteCartOneItem: this.deleteCartOneItem.bind(this),
+            deleteCartItem: this.deleteCartItem.bind(this),
+            deleteUserCartItems: this.deleteUserCartItems.bind(this),
         }
     }
 
@@ -32,6 +35,33 @@ class CartServices {
         try {
             const cart = await Cart.create({ user: userId, sub_product });
             return cart;
+        } catch (e) {
+            throw (e);
+        }
+    }
+
+    async deleteCartOneItem({ userId, sub_product }) {
+        try {
+            const deleted = await Cart.findOneAndDelete({ user: userId, sub_product });
+            return deleted;
+        } catch (e) {
+            throw (e);
+        }
+    }
+
+    async deleteCartItem({ userId, sub_product }) {
+        try {
+            const deleted = await Cart.deleteMany({ user: userId, sub_product });
+            return deleted;
+        } catch (e) {
+            throw (e);
+        }
+    }
+
+    async deleteUserCartItems({ userId }) {
+        try {
+            const deleted = await Cart.deleteMany({ user: userId });
+            return deleted;
         } catch (e) {
             throw (e);
         }

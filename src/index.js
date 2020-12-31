@@ -2,10 +2,11 @@ import express from 'express';
 let app = express(),
     fs = require("fs");
 
-const options = {
-    key: fs.readFileSync("/etc/nginx/ssl/server.key"),
-    cert: fs.readFileSync("/etc/nginx/ssl/server.crt")
-};
+
+// const options = {
+//     key: fs.readFileSync("/etc/nginx/ssl/server.key"),
+//     cert: fs.readFileSync("/etc/nginx/ssl/server.crt")
+// };
 import config from './config';
 import logger from './utilities/logger';
 import helmet from 'helmet';
@@ -13,8 +14,8 @@ import cookieParser from 'cookie-parser';
 const PORT = config.app.port;
 import bodyParser from 'body-parser';
 import cors from 'cors';
-const https = require('https');
-let server = require('https').Server(app);
+// const https = require('https');
+// let server = require('https').Server(app);
 import fileUpload from 'express-fileupload';
 let logErrors = require('./middlewares/logErrors');
 let clientErrorHandler = require('./middlewares/clientErrorHandler');
@@ -33,6 +34,9 @@ mongoose.connect(config.database.uri, {
     useUnifiedTopology: true
 });
 mongoose.connection.on('error', logger.error);
+mongoose.connection.on('connected', () => {
+    console.log('Database connected')
+})
 mongoose.Promise = global.Promise;
 
 
@@ -91,18 +95,18 @@ app.use('/api/customer', Sanatize, require('./routes/user'));
 app.use(logErrors)
 app.use(clientErrorHandler)
 
-// server.listen(PORT, function (err) {
-//     if (err) {
-//         console.log(err);
-//     } else {
-//         console.log('Server started at : ' + PORT);
-//     }
-// });
-
-https.createServer(options, app).listen(PORT, function (err) {
+app.listen(PORT, function (err) {
     if (err) {
         console.log(err);
     } else {
         console.log('Server started at : ' + PORT);
     }
 });
+
+// https.createServer(options, app).listen(PORT, function (err) {
+//     if (err) {
+//         console.log(err);
+//     } else {
+//         console.log('Server started at : ' + PORT);
+//     }
+// });

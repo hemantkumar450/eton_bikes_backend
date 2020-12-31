@@ -1,6 +1,6 @@
 const app = {
   host: process.env.HOST || '0.0.0.0',
-  port: process.env.PORT || '8080',
+  port: process.env.PORT || '5200',
   name: process.env.NAME || 'etonBikes',
   mode: process.env.SERVER || 'DEVELOPMENT',
   secret: 'ANJPV4070F',
