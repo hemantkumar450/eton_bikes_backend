@@ -130,6 +130,21 @@ exports.emailTemplate = {
     <p>Thanks &amp; Regards,</p>
     <p>Eton Team.</p>
     <p><br></p>`
+  },
+  CapturedPayment: {
+    from: '{from}', // Sender address
+    to: '{to}',         // List of recipients
+    subject: 'Payment received from EtonBikes', // Subject line
+    html: `<p>Day Greetings</p>
+    <p>from Eton Bikes,</p>
+    <p><br></p>
+    <p><br></p>
+    <p>Thank you so much {userName} for booking a bike from our end. We will try to make it smooth by sending this as earliest as possible.</p>
+    <p>Till then If you have any query related our product then you can contact us on below contact details.</p>
+    <p><strong><u>Call: +91 8883540000</u></strong></p>
+    <p>Thanks &amp; Regards</p>
+    <p>Eton Team</p>
+    <p>&nbsp;</p>`
   }
 }
 

@@ -1,7 +1,11 @@
-import { Booking } from "../../models";
+import { Booking, User } from "../../models";
 import crypto from "crypto";
 import razerPay from "../../utilities/razerPay";
 import cartService from "./cart-service";
+import emailService from '../common/email.service';
+import { emailTemplate, replaceVariables } from '../../utilities/constants';
+import app from '../../config/app';
+
 class BookingServices {
   constructor() {
     return {
@@ -14,30 +18,30 @@ class BookingServices {
   }
 
   async updateFailedBooking({ booking_id, error }) {
-    try {        
-        const status = "failed";
-        const booking = await Booking.findOneAndUpdate(
-          { _id: booking_id },
-          {
-            payment: error.metadata.payment_id,
-            status,
-            payment_detail: error
-          },
-          { new: true }
-        );
-        return booking;
-      } catch (error) {
-        throw error;
-      }
+    try {
+      const status = "failed";
+      const booking = await Booking.findOneAndUpdate(
+        { _id: booking_id },
+        {
+          payment: error.metadata.payment_id,
+          status,
+          payment_detail: error
+        },
+        { new: true }
+      );
+      return booking;
+    } catch (error) {
+      throw error;
+    }
   }
-  
+
   async createOrder({ user_id }) {
     try {
       // amount, currency = 'INR',
       const userCartItems = await cartService.getCartItemsByUser({
         userId: user_id,
       });
-    //   let amount;
+      //   let amount;
       let amount = 0;
       const subProduct = [];
       userCartItems.forEach((el) => {
@@ -54,17 +58,17 @@ class BookingServices {
           amount += parseInt(price.value);
         }
       });
-    //   amount = 1;
-    //   console.log(amount, tempArr, 'Data');
+      //   amount = 1;
+      //   console.log(amount, tempArr, 'Data');
       const receipt = `receipt #${crypto.randomBytes(3).toString('hex')}`;
       const amountInPaisa = amount * 100;
       const notes = { amountInPaisa, user: user_id };
-      const order = await razerPay.createOrder({ amount: amountInPaisa, currency : 'INR', receipt, notes });
+      const order = await razerPay.createOrder({ amount: amountInPaisa, currency: 'INR', receipt, notes });
       const booking = await Booking.create({
-          order: order.id,
-          amount: amount,
-          user: user_id,
-          product_details: subProduct
+        order: order.id,
+        amount: amount,
+        user: user_id,
+        product_details: subProduct
       });
       return { order_id: order.id, booking_id: booking.id, amount: amount };
     } catch (error) {
@@ -74,8 +78,14 @@ class BookingServices {
 
   async capturedPayment({ booking_id, payment_id, amount, user_id, data }) {
     try {
+      const user = await User.findOne({ _id: user_id });
       await razerPay.capturePayment({ payment_id, amount: parseInt(amount) * 100, currency: 'INR' });
       const status = "success";
+      const message = Object.assign({}, emailTemplate.CapturedPayment);
+      const object = { from: app.etonEmailForVerificationId, to: user.email_detail.email, userName: user.name }
+      message.from = replaceVariables(message.from, object);
+      message.to = replaceVariables(message.to, object);
+      message.html = replaceVariables(message.html, object);
       const booking = await Booking.findOneAndUpdate(
         { _id: booking_id },
         {
@@ -86,6 +96,7 @@ class BookingServices {
         { new: true }
       );
       await cartService.deleteUserCartItems({ userId: user_id });
+      emailService.sendMail(message);
       return booking;
     } catch (error) {
       throw error;
