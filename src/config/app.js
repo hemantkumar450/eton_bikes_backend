@@ -18,9 +18,9 @@ const app = {
   etonEmailForVerificationId: process.env.VERIFICATION_EMAIL || 'sarikasingh0311@gmail.com',
   etonEmailForVerificationPassword: process.env.VERIFICATION_EMAIL_password || 'Sarika@123',
   razerPay: {
-    key: process.env.RAZER_PAY_KEY || 'rzp_test_SAbdjiHkFfwBZ4',
-    secret: process.env.RAZER_PAY_SECRET || '3rvTkGflOX0Z94bROk9rGKDg',
-    webHookSecretKey: process.env.RAZER_PAY_WEB_HOOK_SECRET || 'cofyndtestrazer'
+    key: process.env.RAZER_PAY_KEY || 'rzp_test_Z8LqVx1MG0AMZO',
+    secret: process.env.RAZER_PAY_SECRET || '3ALN1mWBUEnzg3tCizDHcShh',
+    webHookSecretKey: process.env.RAZER_PAY_WEB_HOOK_SECRET || 'EtonBikeRazerWebHook'
   },
 };
 
