@@ -48,9 +48,11 @@ class ProductServices {
             if (product) {
                 product = product.toObject();
                 if (product) {
-                    product.sub_products = await SubProduct.find({ product: product._id })
+                    const sub_products = await SubProduct.find({ product: product._id })
                         .populate('detail.media')
-                        .populate('detail.icon')
+                        .populate('detail.icon');
+
+                    product.sub_products = sub_products.filter(x => !x.is_deleted);
                 }
                 return product;
             }
