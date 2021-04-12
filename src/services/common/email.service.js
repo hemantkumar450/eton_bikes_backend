@@ -17,6 +17,8 @@ class EmailService {
                     pass: app.etonEmailForVerificationPassword
                 }
             });
+            console.log(app.etonEmailForVerificationId, app.etonEmailForVerificationPassword);
+            console.log('message', message, 'message');
             transporter.sendMail(message, function (err, info) {
                 if (err) {
                     console.log(err)
