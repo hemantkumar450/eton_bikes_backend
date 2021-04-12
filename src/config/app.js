@@ -15,8 +15,8 @@ const app = {
   allowedExtensions: ['png', 'jpeg', 'jpg', 'pdf'],
   verificationSecret: process.env.VERIFICATION_SECRET || 'FgqVbQNpMfgIalRAmRucS26hWOXMsP0z',
   frontEndUrl: process.env.FRONT_END_URL || 'https://etonbikes.com/validate-email',
-  etonEmailForVerificationId: process.env.VERIFICATION_EMAIL || 'sarikasingh0311@gmail.com',
-  etonEmailForVerificationPassword: process.env.VERIFICATION_EMAIL_password || 'Sarika@123',
+  etonEmailForVerificationId: process.env.VERIFICATION_EMAIL,
+  etonEmailForVerificationPassword: process.env.VERIFICATION_EMAIL_PASSWORD,
   razerPay: {
     key: process.env.RAZER_PAY_KEY || 'rzp_test_Z8LqVx1MG0AMZO',
     secret: process.env.RAZER_PAY_SECRET || '3ALN1mWBUEnzg3tCizDHcShh',
