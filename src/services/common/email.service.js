@@ -10,27 +10,14 @@ class EmailService {
 
     async sendMail(message) {
         try {
-            // let transport = nodemailer.createTransport({
-            //     host: 'smtp.mailtrap.io',
-            //     port: 2525,
-            //     auth: {
-            //         user: 'hemant.kumar450@gmail.com',
-            //         pass: 'mjknh@123'
-            //     }
-            // });
-
-            let transport = nodemailer.createTransport({
-                host: 'smtp.gmail.com',
-                port: 587,
-                secure: false,
-                requireTLS: true,
+            var transporter = nodemailer.createTransport({
+                service: 'gmail',
                 auth: {
                     user: app.etonEmailForVerificationId,
                     pass: app.etonEmailForVerificationPassword
                 }
             });
-
-            transport.sendMail(message, function (err, info) {
+            transporter.sendMail(message, function (err, info) {
                 if (err) {
                     console.log(err)
                 } else {

@@ -87,7 +87,6 @@ class UserAuthService {
             const email_detail = { email, token };
 
             const isUserExist = await this.checkUserExists(email);
-            console.log(isUserExist);
             if (isUserExist) {
                 if (isUserExist.email_detail.is_verified) {
                     this._throwException('User is already exists');
