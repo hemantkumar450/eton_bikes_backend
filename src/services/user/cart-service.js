@@ -25,6 +25,10 @@ class CartServices {
                     path: 'sub_product',
                     populate: { path: 'product' }
                 })
+                .populate({
+                    path: 'sub_product',
+                    populate: { path: 'detail.media' }
+                })
             return cartItems;
         } catch (e) {
             throw (e)
